@@ -1,1 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Phase 2 — Interactive Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0e14;
+  --surface: #13161f;
+  --surface2: #1a1e2b;
+  --border: #242838;
+  --border2: #2e3449;
+  --accent: #a78bfa;
+  --accent2: #38bdf8;
+  --accent3: #10b981;
+  --danger: #ef4444;
+  --warn: #f59e0b;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --muted2: #94a3b8;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+  --radius: 8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);min-height:100vh;
+  display:flex;overflow:hidden;height:100vh;
+}
 
+/* ── SIDEBAR ── */
+.sidebar{
+  width:268px;min-width:268px;background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;height:100vh;overflow:hidden;
+}
+.sidebar-header{
+  padding:20px 18px 14px;border-bottom:1px solid var(--border);
+}
+.logo{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#fff;}
+.logo span{color:var(--accent);}
+.phase-tag{
+  font-family:var(--mono);font-size:10px;color:var(--muted);
+  letter-spacing:2px;margin-top:4px;
+}
+.phase-link{
+  display:inline-block;font-family:var(--mono);font-size:10px;
+  color:var(--accent2);border:1px solid rgba(56,189,248,.2);
+  padding:2px 7px;border-radius:3px;margin-top:6px;cursor:pointer;
+  text-decoration:none;
+}
+.progress-wrap{padding:14px 18px;border-bottom:1px solid var(--border);}
+.progress-label{
+  display:flex;justify-content:space-between;
+  font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:6px;
+}
+.progress-track{height:4px;background:var(--border2);border-radius:2px;overflow:hidden;}
+.progress-fill{
+  height:100%;background:var(--accent);border-radius:2px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+}
+.nav{flex:1;overflow-y:auto;padding:10px 0;}
+.nav::-webkit-scrollbar{width:4px;}
+.nav::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 18px;cursor:pointer;
+  border-left:2px solid transparent;
+  transition:all .2s;font-size:13px;font-weight:600;
+  color:var(--muted2);
+}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{border-left-color:var(--accent);background:rgba(167,139,250,.06);color:var(--accent);}
+.nav-item.done{color:var(--accent3);}
+.nav-num{
+  width:22px;height:22px;border-radius:50%;background:var(--border2);
+  font-family:var(--mono);font-size:10px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:var(--muted);transition:all .2s;
+}
+.nav-item.active .nav-num{background:var(--accent);color:#000;font-weight:700;}
+.nav-item.done .nav-num{background:var(--accent3);color:#000;}
+.check{display:none;font-size:11px;}
+.nav-item.done .check{display:inline;}
+.nav-item.done .nn{display:none;}
+.nav-sub{font-size:10px;color:var(--muted);font-weight:400;font-family:var(--mono);}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;border-bottom:1px solid var(--border);
+  background:var(--surface);flex-shrink:0;
+}
+.lesson-title{font-size:20px;font-weight:800;color:#fff;}
+.lesson-meta{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;}
+.btn{
+  font-family:var(--sans);font-size:13px;font-weight:700;
+  padding:8px 18px;border-radius:6px;border:none;cursor:pointer;
+  transition:all .2s;letter-spacing:.3px;
+}
+.btn-primary{background:var(--accent);color:#000;}
+.btn-primary:hover{background:#c4b5fd;transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--muted2);border:1px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--muted2);color:#fff;}
+.topbar-btns{display:flex;gap:8px;}
+.content{flex:1;overflow-y:auto;padding:28px;}
+.content::-webkit-scrollbar{width:6px;}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ── CONCEPT ── */
+.concept{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:22px;margin-bottom:20px;
+}
+.concept-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.concept-icon{font-size:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;}
+.concept-title{font-size:16px;font-weight:700;color:#fff;}
+.concept-body{font-size:14px;color:var(--muted2);line-height:1.7;}
+.concept-body p{margin-bottom:10px;}
+.concept-body p:last-child{margin-bottom:0;}
+.concept-body strong{color:var(--text);}
+.concept-body code{
+  font-family:var(--mono);font-size:12px;
+  background:var(--surface2);padding:1px 5px;border-radius:3px;color:var(--accent2);
+}
+
+/* ── CODE HIGHLIGHT ── */
+.highlight{
+  background:var(--surface2);border-left:3px solid var(--accent);
+  border-radius:0 6px 6px 0;padding:14px 16px;
+  margin:12px 0;font-family:var(--mono);font-size:12.5px;
+  color:var(--muted2);line-height:1.9;
+}
+.highlight .kw{color:#c084fc;}
+.highlight .str{color:#86efac;}
+.highlight .num{color:#fb923c;}
+.highlight .cm{color:#374151;font-style:italic;}
+.highlight .fn{color:#60a5fa;}
+.highlight .cls{color:#f0c040;}
+.highlight .acc{color:var(--accent);}
+
+/* ── CALLOUT ── */
+.callout{
+  display:flex;gap:10px;padding:12px 14px;border-radius:6px;
+  margin:12px 0;font-size:13px;line-height:1.6;
+}
+.callout.tip{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);color:#7dd3fc;}
+.callout.warn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);color:#fcd34d;}
+.callout.info{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);color:#c4b5fd;}
+.callout-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+
+/* ── FLOW DIAGRAM ── */
+.flow{
+  display:flex;align-items:center;flex-wrap:wrap;gap:4px;
+  background:var(--surface2);border-radius:6px;padding:14px;
+  margin:12px 0;font-family:var(--mono);font-size:11px;
+}
+.flow-box{
+  padding:6px 12px;border-radius:4px;font-weight:600;
+  background:var(--surface);border:1px solid var(--border2);
+  color:var(--text);white-space:nowrap;
+}
+.flow-box.accent{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.3);color:var(--accent);}
+.flow-box.blue{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:var(--accent2);}
+.flow-box.green{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.3);color:var(--accent3);}
+.flow-box.orange{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:var(--warn);}
+.flow-arr{color:var(--muted);font-size:14px;}
+
+/* ── EDITOR ── */
+.editor-wrap{margin-bottom:20px;}
+.editor-bar{
+  background:#161b27;border:1px solid var(--border);
+  border-radius:var(--radius) var(--radius) 0 0;
+  padding:8px 14px;display:flex;align-items:center;justify-content:space-between;
+}
+.editor-filename{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.editor-dots{display:flex;gap:4px;}
+.editor-dots span{width:10px;height:10px;border-radius:50%;}
+.editor-dots .r{background:#ef4444;}
+.editor-dots .y{background:#f59e0b;}
+.editor-dots .g{background:#10b981;}
+textarea.code{
+  width:100%;background:#0d1117;
+  border:1px solid var(--border);border-top:none;
+  color:#e6edf3;font-family:var(--mono);font-size:13px;
+  padding:16px;resize:vertical;min-height:130px;
+  outline:none;line-height:1.7;tab-size:2;
+}
+.run-bar{
+  background:var(--surface2);border:1px solid var(--border);
+  border-top:none;border-radius:0 0 var(--radius) var(--radius);
+  padding:8px 12px;display:flex;align-items:center;justify-content:space-between;
+}
+.run-btn{
+  font-family:var(--mono);font-size:11px;letter-spacing:1px;
+  padding:5px 14px;border-radius:4px;border:none;cursor:pointer;
+  background:var(--accent);color:#000;font-weight:700;transition:all .2s;
+}
+.run-btn:hover{background:#c4b5fd;}
+.output-box{
+  background:#020408;border:1px solid var(--border);border-top:none;
+  border-radius:0 0 var(--radius) var(--radius);
+  padding:12px 16px;font-family:var(--mono);font-size:12px;
+  min-height:40px;color:#94a3b8;line-height:1.8;display:none;
+}
+.output-box.has-output{display:block;}
+.out-line{color:#86efac;}
+.err-line{color:#f87171;}
+.warn-line{color:#fcd34d;}
+.log-prefix{color:var(--muted);margin-right:6px;}
+
+/* ── QUIZ ── */
+.quiz-wrap{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:22px;margin-bottom:20px;
+}
+.quiz-title{
+  font-size:11px;font-weight:700;color:var(--accent);
+  font-family:var(--mono);letter-spacing:2px;margin-bottom:14px;
+}
+.quiz-q{font-size:15px;font-weight:600;color:#fff;margin-bottom:14px;line-height:1.5;}
+.quiz-options{display:flex;flex-direction:column;gap:8px;}
+.quiz-opt{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 14px;border-radius:6px;
+  border:1px solid var(--border2);cursor:pointer;
+  transition:all .2s;font-size:13px;
+  background:var(--surface2);line-height:1.5;
+}
+.quiz-opt:hover:not(.correct):not(.wrong){border-color:var(--accent);color:var(--accent);}
+.quiz-opt.selected{border-color:var(--accent2);background:rgba(56,189,248,.07);color:var(--accent2);}
+.quiz-opt.correct{border-color:var(--accent3);background:rgba(16,185,129,.08);color:var(--accent3);}
+.quiz-opt.wrong{border-color:var(--danger);background:rgba(239,68,68,.06);color:#f87171;}
+.quiz-opt-key{
+  font-family:var(--mono);font-size:10px;
+  width:20px;height:20px;border-radius:4px;
+  background:var(--border);display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.quiz-feedback{margin-top:12px;padding:10px 14px;border-radius:6px;font-size:13px;display:none;line-height:1.6;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.ok{background:rgba(16,185,129,.07);color:var(--accent3);border:1px solid rgba(16,185,129,.2);}
+.quiz-feedback.bad{background:rgba(239,68,68,.07);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.check-btn{
+  margin-top:12px;padding:8px 18px;border-radius:6px;
+  border:none;cursor:pointer;background:var(--accent2);
+  color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;transition:all .2s;
+}
+.check-btn:hover:not(:disabled){background:#0284c7;}
+.check-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ── CHALLENGE ── */
+.challenge{
+  background:linear-gradient(135deg,rgba(167,139,250,.04),rgba(56,189,248,.03));
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;margin-bottom:20px;
+}
+.challenge-badge{
+  font-family:var(--mono);font-size:10px;letter-spacing:1px;
+  padding:3px 8px;border-radius:4px;
+  background:rgba(167,139,250,.15);color:var(--accent);
+  border:1px solid rgba(167,139,250,.3);
+}
+.challenge-title{font-size:15px;font-weight:700;color:#fff;margin:10px 0 6px;}
+.challenge-desc{font-size:13px;color:var(--muted2);line-height:1.7;margin-bottom:12px;}
+.challenge-hint{
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  background:var(--surface2);padding:8px 12px;border-radius:4px;margin-bottom:12px;
+  border-left:2px solid var(--accent2);
+}
+
+/* ── COMPLETE ── */
+.complete-screen{text-align:center;padding:50px 20px;}
+.complete-emoji{font-size:64px;display:block;margin-bottom:20px;animation:bounce 1s infinite alternate;}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+.complete-title{font-size:32px;font-weight:800;color:#fff;margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted2);margin-bottom:24px;}
+.xp-badge{
+  display:inline-block;font-family:var(--mono);font-size:14px;
+  padding:10px 24px;border-radius:8px;
+  background:rgba(167,139,250,.12);color:var(--accent);
+  border:1px solid rgba(167,139,250,.3);margin-bottom:28px;
+}
+.score-grid{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:28px;}
+.score-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px 22px;min-width:90px;
+}
+.score-val{font-size:28px;font-weight:800;color:#fff;font-family:var(--mono);}
+.score-lbl{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-top:2px;}
+
+/* ── STEP NAV ── */
+.step-nav{
+  display:flex;align-items:center;gap:8px;
+  padding:12px 28px;border-top:1px solid var(--border);
+  background:var(--surface);flex-shrink:0;
+}
+.step-dots{display:flex;gap:6px;flex:1;justify-content:center;}
+.step-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--border2);transition:all .2s;cursor:pointer;
+}
+.step-dot.active{background:var(--accent);width:24px;border-radius:4px;}
+.step-dot.done{background:var(--accent3);}
+.step-info{font-family:var(--mono);font-size:11px;color:var(--muted);}
+
+/* ── XP BAR ── */
+.xp-bar{
+  padding:10px 18px;border-top:1px solid var(--border);
+  background:var(--surface);display:flex;align-items:center;gap:10px;
+}
+.xp-label{font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap;}
+.xp-track{flex:1;height:3px;background:var(--border2);border-radius:2px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s;}
+.xp-val{font-family:var(--mono);font-size:10px;color:var(--accent);}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px 18px;
+  font-size:13px;color:var(--text);
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  transform:translateY(80px);opacity:0;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+  z-index:100;
+}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:var(--accent3);}
+.toast.error{border-color:var(--danger);}
+
+/* ── TWO-COL ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0;}
+@media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+.mini-card{
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:6px;padding:14px;
+}
+.mini-card-title{font-size:12px;font-weight:700;color:var(--accent2);
+  font-family:var(--mono);margin-bottom:8px;letter-spacing:.5px;}
+.mini-card .highlight{margin:0;font-size:11.5px;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">JS<span>.</span>learn</div>
+    <div class="phase-tag">PHASE 2 · ADVANCED JS</div>
+    <a class="phase-link" href="js-phase1-learning-site.html">← Phase 1</a>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>PROGRESS</span><span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+  <nav class="nav" id="nav-list"></nav>
+  <div class="xp-bar">
+    <span class="xp-label">XP</span>
+    <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+    <span class="xp-val" id="xp-val">0</span>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="lesson-title" id="top-title">Phase 2 — Advanced JS</div>
+      <div class="lesson-meta" id="top-meta">Select a lesson to begin</div>
+    </div>
+    <div class="topbar-btns">
+      <button class="btn btn-ghost" onclick="navigate(-1)">← Prev</button>
+      <button class="btn btn-primary" onclick="navigate(1)">Next →</button>
+    </div>
+  </div>
+  <div class="content" id="content-area"></div>
+  <div class="step-nav">
+    <span class="step-info" id="step-info">Step 1 of 8</span>
+    <div class="step-dots" id="step-dots"></div>
+    <span class="step-info" id="xp-earned">0 XP earned</span>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// PHASE 2 LESSONS
+// ══════════════════════════════════════════════════════
+const lessons = [
+
+// ── LESSON 1: Scope & Closures ──────────────────────
+{
+  id:1, icon:"🔭", title:"Scope & Closures", tag:"global · block · closure", xp:120,
+  content:`
+<div class="concept">
+  <div class="concept-header"><div class="concept-icon">🔭</div><div class="concept-title">What is Scope?</div></div>
+  <div class="concept-body">
+    <p><strong>Scope</strong> determines where a variable is accessible. Think of it like zones on a factory floor — some things are available everywhere, others only inside a specific room.</p>
+    <div class="two-col">
+      <div class="mini-card">
+        <div class="mini-card-title">GLOBAL SCOPE</div>
+        <div class="highlight">
+<span class="kw">const</span> plant = <span class="str">"Factory A"</span>;<br>
+<span class="cm">// accessible ANYWHERE</span>
+        </div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-card-title">BLOCK SCOPE</div>
+        <div class="highlight">
+<span class="kw">if</span> (<span class="kw">true</span>) {<br>
+&nbsp;&nbsp;<span class="kw">let</span> local = <span class="str">"inside only"</span>;<br>
+}<br>
+<span class="cm">// local is gone here</span>
+        </div>
+      </div>
+    </div>
+    <p><strong>Rule:</strong> <code>const</code> and <code>let</code> are block-scoped. <code>var</code> is function-scoped (one reason to avoid it).</p>
+  </div>
+</div>
+
+<div class="concept">
+  <div class="concept-header"><div class="concept-icon">🔒</div><div class="concept-title">Closures — Functions that Remember</div></div>
+  <div class="concept-body">
+    <p>A <strong>closure</strong> is a function that <em>remembers</em> variables from the scope where it was created — even after that scope is gone. This is one of JS's most powerful features.</p>
+    <div class="highlight">
+<span class="kw">function</span> <span class="fn">makeCounter</span>() {<br>
+&nbsp;&nbsp;<span class="kw">let</span> count = <span class="num">0</span>; <span class="cm">// this variable is "enclosed"</span><br>
+&nbsp;&nbsp;<span class="kw">return function</span>() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;count++;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> count;<br>
+&nbsp;&nbsp;};<br>
+}<br>
+<span class="kw">const</span> counter = <span class="fn">makeCounter</span>();<br>
+counter(); <span class="cm">// → 1</span><br>
+counter(); <span class="cm">// → 2  (count persists!)</span>
+    </div>
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <span>Closures are used everywhere: event handlers, timers, factory functions, and React hooks all rely on them.</span>
+    </div>
+  </div>
+</div>`,
+  code:`// SCOPE DEMO
+const plantName = "TechEdge Factory";  // global scope
+
+function runMotor() {
+  const motorId = "MOT-01";            // function scope
+  let rpm = 0;
+
+  if (rpm === 0) {
+    let status = "IDLE";               // block scope — only inside {}
+    console.log("Status inside block:", status);
+  }
+  // console.log(status);              // ❌ would crash — status is gone
+
+  console.log("Motor:", motorId, "at", plantName);
+}
+
+runMotor();
+console.log("Plant:", plantName);
+
+// CLOSURE DEMO — sensor alarm counter
+function makeAlarmCounter(sensorId) {
+  let alarmCount = 0;         // enclosed variable
+
+  return function(value, threshold) {
+    if (value > threshold) {
+      alarmCount++;
+      console.log(sensorId + " ALARM #" + alarmCount + " → value: " + value);
+    } else {
+      console.log(sensorId + " OK → " + value + " (alarms so far: " + alarmCount + ")");
+    }
+  };
+}
+
+const checkTemp = makeAlarmCounter("TMP-01");
+checkTemp(72, 85);   // OK
+checkTemp(91, 85);   // ALARM #1
+checkTemp(88, 85);   // ALARM #2
+checkTemp(79, 85);   // OK — counter persists at 2`,
+  quiz:{
+    q:"A closure is a function that…",
+    opts:[
+      "Can only use global variables",
+      "Remembers variables from its outer scope even after that scope has closed",
+      "Runs automatically when the page loads",
+      "Creates a new variable scope each tim
