@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -518,4 +517,797 @@ console.log("Updated temp:", temperature, "°C");`,
       temp === <span class="num">72</span>    <span class="cm">// strictly equal (use === not ==)</span><br>
       temp !== <span class="num">72</span>    <span class="cm">// not equal</span><br>
       temp &gt;  <span class="num">80</span>    <span class="cm">// greater than</span><br>
-      temp &lt;= <span class="num">100</span>   <span class="cm">// less than or equal</span><b
+      temp &lt;= <span class="num">100</span>   <span class="cm">// less than or equal</span><br><br>
+      <span class="cm">// Logical</span><br>
+      a &amp;&amp; b    <span class="cm">// AND — both must be true</span><br>
+      a || b    <span class="cm">// OR  — at least one true</span><br>
+      !a        <span class="cm">// NOT — flips true/false</span>
+    </div>
+  </div>
+</div>`,
+  code: `// Sensor threshold calculations
+const motorTemp = 88;
+const maxTemp = 100;
+const warnTemp = 85;
+
+// Arithmetic
+const tempPercent = (motorTemp / maxTemp) * 100;
+console.log("Temp %:", tempPercent.toFixed(1) + "%");
+
+// Comparison operators
+console.log("Above warning?", motorTemp > warnTemp);   // true
+console.log("At max?", motorTemp === maxTemp);           // false
+console.log("Safe?", motorTemp <= maxTemp);              // true
+
+// Logical AND — both conditions must be true
+const isWarning = motorTemp > warnTemp && motorTemp < maxTemp;
+console.log("In warning zone?", isWarning);             // true
+
+// Logical OR
+const isCritical = motorTemp >= 95 || motorTemp < 0;
+console.log("Critical condition?", isCritical);         // false`,
+  quiz: {
+    q: "What does the === operator do in JavaScript?",
+    opts: ["Assigns a value to a variable","Checks if two values are strictly equal","Divides two numbers","Logical AND"],
+    answer: 1,
+    explain: "✅ Correct! === is the strict equality operator. It checks both value AND type. Always prefer === over == in JavaScript."
+  },
+  challenge: {
+    title: "Calculate Load Percentage",
+    desc: "A VFD motor runs at 1,350 rpm. Max speed is 1,800 rpm. Calculate the load % and log whether it's above 80% (warn zone).",
+    starter: `const currentRPM = 1350;\nconst maxRPM = 1800;\n\n// Calculate load percentage\nconst loadPercent = // your formula here\n\nconsole.log("Load:", loadPercent.toFixed(1) + "%");\n\n// Is it in warn zone (above 80%)?\nconst isWarn = // your comparison here\nconsole.log("Warning zone?", isWarn);\n`
+  }
+},
+{
+  id: 3,
+  title: "Control Flow",
+  icon: "🔀",
+  tag: "if · else if · else · switch",
+  xp: 100,
+  content: `
+<div class="concept">
+  <div class="concept-header">
+    <div class="concept-icon">🔀</div>
+    <div class="concept-title">if / else if / else</div>
+  </div>
+  <div class="concept-body">
+    <p>Control flow lets your program <strong>make decisions</strong>. Code runs differently depending on conditions — just like a PLC rung only activates when contacts are true.</p>
+    <div class="highlight">
+      <span class="kw">if</span> (temperature > <span class="num">100</span>) {<br>
+      &nbsp;&nbsp;console.<span class="fn">log</span>(<span class="str">"DANGER: overheating"</span>);<br>
+      } <span class="kw">else if</span> (temperature > <span class="num">85</span>) {<br>
+      &nbsp;&nbsp;console.<span class="fn">log</span>(<span class="str">"WARNING: getting hot"</span>);<br>
+      } <span class="kw">else</span> {<br>
+      &nbsp;&nbsp;console.<span class="fn">log</span>(<span class="str">"OK: normal range"</span>);<br>
+      }
+    </div>
+    <p>JS checks conditions <strong>top to bottom</strong> and runs only the first matching block.</p>
+  </div>
+</div>
+
+<div class="concept">
+  <div class="concept-header">
+    <div class="concept-icon">🔧</div>
+    <div class="concept-title">Ternary Operator (shortcut if)</div>
+  </div>
+  <div class="concept-body">
+    <p>A compact one-line if/else for simple decisions:</p>
+    <div class="highlight">
+      <span class="cm">// condition ? valueIfTrue : valueIfFalse</span><br>
+      <span class="kw">const</span> status = temp > <span class="num">85</span> ? <span class="str">"WARN"</span> : <span class="str">"OK"</span>;
+    </div>
+  </div>
+</div>`,
+  code: `// Alarm system using if/else if/else
+function checkAlarm(pressure) {
+  let status;
+  let message;
+
+  if (pressure >= 7.5) {
+    status = "🔴 DANGER";
+    message = "Emergency shutoff triggered!";
+  } else if (pressure >= 6.0) {
+    status = "🟡 WARNING";
+    message = "Approaching max pressure";
+  } else if (pressure < 1.0) {
+    status = "🔵 LOW";
+    message = "Pressure below minimum";
+  } else {
+    status = "🟢 NORMAL";
+    message = "All systems nominal";
+  }
+
+  console.log(status + " — " + pressure + " bar");
+  console.log("↳ " + message);
+}
+
+// Test with different values
+checkAlarm(4.5);   // normal
+checkAlarm(6.3);   // warning
+checkAlarm(8.0);   // danger`,
+  quiz: {
+    q: "How many blocks run when an if/else-if/else chain finds a matching condition?",
+    opts: ["All matching blocks run","Only the FIRST matching block runs","The last block always runs","All blocks always run"],
+    answer: 1,
+    explain: "✅ Correct! JS evaluates conditions top to bottom and executes only the first true branch, then skips the rest."
+  },
+  challenge: {
+    title: "Motor Status Classifier",
+    desc: "Write an if/else chain that classifies a motor's RPM: IDLE (0), STARTING (<300), RUNNING (300–1750), OVERSPEED (>1750). Test with rpm = 1200.",
+    starter: `const rpm = 1200;\n\n// Write your if / else if / else chain here\n// IDLE: rpm === 0\n// STARTING: rpm > 0 && rpm < 300\n// RUNNING: rpm >= 300 && rpm <= 1750\n// OVERSPEED: rpm > 1750\n\nif (rpm === 0) {\n  console.log("IDLE");\n} // add more branches...\n`
+  }
+},
+{
+  id: 4,
+  title: "Loops",
+  icon: "🔄",
+  tag: "for · while · forEach",
+  xp: 100,
+  content: `
+<div class="concept">
+  <div class="concept-header">
+    <div class="concept-icon">🔄</div>
+    <div class="concept-title">for Loop</div>
+  </div>
+  <div class="concept-body">
+    <p>Loops repeat a block of code — like a PLC scan cycle that keeps running. The <strong>for loop</strong> is most common when you know how many times to repeat:</p>
+    <div class="highlight">
+      <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i < <span class="num">5</span>; i++) {<br>
+      &nbsp;&nbsp;<span class="cm">// runs 5 times: i = 0,1,2,3,4</span><br>
+      &nbsp;&nbsp;console.<span class="fn">log</span>(<span class="str">"Scan cycle:"</span>, i);<br>
+      }
+    </div>
+  </div>
+</div>
+
+<div class="concept">
+  <div class="concept-header">
+    <div class="concept-icon">📋</div>
+    <div class="concept-title">forEach — Loop over Arrays</div>
+  </div>
+  <div class="concept-body">
+    <p>The cleanest way to loop through every item in an array:</p>
+    <div class="highlight">
+      <span class="kw">const</span> sensors = [<span class="str">"TMP"</span>, <span class="str">"PRS"</span>, <span class="str">"RPM"</span>];<br><br>
+      sensors.<span class="fn">forEach</span>(<span class="kw">function</span>(sensor) {<br>
+      &nbsp;&nbsp;console.<span class="fn">log</span>(<span class="str">"Reading:"</span>, sensor);<br>
+      });<br><br>
+      <span class="cm">// Modern arrow function shorthand:</span><br>
+      sensors.<span class="fn">forEach</span>(sensor => console.<span class="fn">log</span>(sensor));
+    </div>
+  </div>
+</div>`,
+  code: `// Log multiple sensor readings with a for loop
+const readings = [68, 71, 85, 92, 79, 103, 88];
+
+console.log("=== Sensor Log ===");
+for (let i = 0; i < readings.length; i++) {
+  const temp = readings[i];
+  const status = temp >= 100 ? "DANGER" : temp >= 85 ? "WARN" : "OK";
+  console.log("Reading [" + i + "]: " + temp + "°C → " + status);
+}
+
+// forEach — cleaner for arrays
+console.log("\\n=== forEach version ===");
+const sensors = ["TMP-01", "PRS-01", "RPM-01", "HUM-01"];
+sensors.forEach(function(id, index) {
+  console.log("Sensor " + (index + 1) + ": " + id);
+});
+
+// while loop — runs while condition is true
+let countdown = 3;
+console.log("\\n=== Startup countdown ===");
+while (countdown > 0) {
+  console.log("Starting in " + countdown + "...");
+  countdown--;
+}
+console.log("Motor started!");`,
+  quiz: {
+    q: "What does readings.length give you?",
+    opts: ["The first item in the array","The number of items in the array","The last item in the array","The index of the middle item"],
+    answer: 1,
+    explain: "✅ Correct! .length returns the total number of elements in an array. If readings = [68,71,85], then readings.length === 3."
+  },
+  challenge: {
+    title: "Find the Hottest Reading",
+    desc: "Given an array of temperature readings, loop through and find the maximum value. Log 'Max temp: X°C'.",
+    starter: `const temps = [67, 72, 89, 95, 78, 103, 88, 91];\n\nlet maxTemp = 0; // start at 0\n\n// Loop through temps and update maxTemp when you find a higher value\nfor (let i = 0; i < temps.length; i++) {\n  // if temps[i] > maxTemp, update maxTemp\n}\n\nconsole.log("Max temp:", maxTemp + "°C");\n`
+  }
+},
+{
+  id: 5,
+  title: "Functions",
+  icon: "🔧",
+  tag: "declaration · parameters · return",
+  xp: 150,
+  content: `
+<div class="concept">
+  <div class="concept-header">
+    <div class="concept-icon">🔧</div>
+    <div class="concept-title">What is a Function?</div>
+  </div>
+  <div class="concept-body">
+    <p>A function is a <strong>reusable block of code</strong> with a name. You define it once, call it many times — like a subroutine in PLC programming. Functions accept <strong>parameters</strong> (inputs) and can <strong>return</strong> a value (output).</p>
+    <div class="highlight">
+      <span class="kw">function</span> <span class="fn">add</span>(a, b) {   <span class="cm">// a and b are parameters</span><br>
+      &nbsp;&nbsp;<span class="kw">return</span> a + b;          <span class="cm">// return sends a value back</span><br>
+      }<br><br>
+      <span class="kw">const</span> result = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">4</span>); <span class="cm">// result = 7</span>
+    </div>
+  </div>
+</div>
+
+<div class="concept">
+  <div class="concept-header">
+    <div class="concept-icon">➡️</div>
+    <div class="concept-title">Arrow Functions (modern shorthand)</div>
+  </div>
+  <div class="concept-body">
+    <p>Arrow functions are a compact way to write functions:</p>
+    <div class="highlight">
+      <span class="cm">// Regular function</span><br>
+      <span class="kw">function</span> <span class="fn">square</span>(n) { <span class="kw">return</span> n * n; }<br><br>
+      <span class="cm">// Arrow function — same thing, shorter</span><br>
+      <span class="kw">const</span> <span class="fn">square</span> = n => n * n;<br><br>
+      <span class="cm">// Arrow with multiple lines</span><br>
+      <span class="kw">const</span> <span class="fn">greet</span> = (name) => {<br>
+      &nbsp;&nbsp;<span class="kw">return</span> <span class="str">"Hello, "</span> + name;<br>
+      };
+    </div>
+  </div>
+</div>`,
+  code: `// Function to get sensor status
+function getStatus(value, warnAt, dangerAt) {
+  if (value >= dangerAt) return "DANGER";
+  if (value >= warnAt)   return "WARNING";
+  return "NORMAL";
+}
+
+// Function to format a sensor reading
+function formatReading(id, value, unit, warnAt, dangerAt) {
+  const status = getStatus(value, warnAt, dangerAt);
+  return id + " → " + value + " " + unit + " [" + status + "]";
+}
+
+// Arrow function for percentage calculation
+const calcPercent = (val, max) => ((val / max) * 100).toFixed(1) + "%";
+
+// Call the functions
+console.log(formatReading("TMP-01", 92, "°C",  85, 100));
+console.log(formatReading("PRS-01", 5.2, "bar", 6, 7.5));
+console.log(formatReading("RPM-01", 1760, "rpm", 1600, 1750));
+
+console.log("\\n--- Percentages ---");
+console.log("Motor load:", calcPercent(1450, 1800));
+console.log("Tank fill:",  calcPercent(340, 500));`,
+  quiz: {
+    q: "What does the 'return' keyword do in a function?",
+    opts: ["Stops the program","Sends a value back to whoever called the function","Declares a variable","Starts a loop"],
+    answer: 1,
+    explain: "✅ Correct! 'return' sends a value out of the function. Without return, the function does its work but gives nothing back (returns undefined)."
+  },
+  challenge: {
+    title: "Build a Unit Converter",
+    desc: "Write a function celsiusToFahrenheit(c) that converts °C to °F using formula: (c × 9/5) + 32. Test it with 0, 100, and 72.",
+    starter: `// Define the function\nfunction celsiusToFahrenheit(c) {\n  // formula: (c * 9/5) + 32\n  return // your formula here\n}\n\n// Test it\nconsole.log("0°C =", celsiusToFahrenheit(0), "°F");   // should be 32\nconsole.log("100°C =", celsiusToFahrenheit(100), "°F"); // should be 212\nconsole.log("72°C =", celsiusToFahrenheit(72), "°F");   // should be ~161.6\n`
+  }
+},
+{
+  id: 6,
+  title: "Arrays & Objects",
+  icon: "🗂️",
+  tag: "arrays · objects · methods",
+  xp: 150,
+  content: `
+<div class="concept">
+  <div class="concept-header">
+    <div class="concept-icon">📋</div>
+    <div class="concept-title">Arrays — Ordered Lists</div>
+  </div>
+  <div class="concept-body">
+    <p>An array stores <strong>multiple values in one variable</strong>, in order. Items are accessed by their <strong>index</strong> (starting at 0).</p>
+    <div class="highlight">
+      <span class="kw">const</span> temps = [<span class="num">68</span>, <span class="num">72</span>, <span class="num">85</span>, <span class="num">91</span>];<br>
+      temps[<span class="num">0</span>]    <span class="cm">// → 68  (first item)</span><br>
+      temps[<span class="num">2</span>]    <span class="cm">// → 85  (third item)</span><br>
+      temps.<span class="fn">push</span>(<span class="num">77</span>) <span class="cm">// add to end</span><br>
+      temps.<span class="fn">pop</span>()     <span class="cm">// remove last item</span><br>
+      temps.<span class="fn">filter</span>(t => t > <span class="num">80</span>) <span class="cm">// [85, 91]</span>
+    </div>
+  </div>
+</div>
+
+<div class="concept">
+  <div class="concept-header">
+    <div class="concept-icon">🗃️</div>
+    <div class="concept-title">Objects — Key/Value Pairs</div>
+  </div>
+  <div class="concept-body">
+    <p>An object groups <strong>related data together</strong> using named keys — perfect for sensor records:</p>
+    <div class="highlight">
+      <span class="kw">const</span> sensor = {<br>
+      &nbsp;&nbsp;id: <span class="str">"TMP-01"</span>,<br>
+      &nbsp;&nbsp;value: <span class="num">85</span>,<br>
+      &nbsp;&nbsp;unit: <span class="str">"°C"</span>,<br>
+      &nbsp;&nbsp;active: <span class="kw">true</span><br>
+      };<br><br>
+      sensor.id       <span class="cm">// → "TMP-01" (dot notation)</span><br>
+      sensor[<span class="str">"value"</span>] <span class="cm">// → 85 (bracket notation)</span>
+    </div>
+  </div>
+</div>`,
+  code: `// Array of sensor objects — combining both concepts
+const sensors = [
+  { id: "TMP-01", label: "Motor Temp",   value: 92,   unit: "°C",  max: 100 },
+  { id: "PRS-01", label: "Pressure",     value: 5.8,  unit: "bar", max: 8   },
+  { id: "RPM-01", label: "Motor Speed",  value: 1800, unit: "rpm", max: 1800},
+  { id: "HUM-01", label: "Cabinet Hum",  value: 65,   unit: "%",   max: 100 },
+];
+
+// Access an object's properties
+console.log("First sensor:", sensors[0].id);
+console.log("Its value:", sensors[0].value, sensors[0].unit);
+
+// Loop + access — log all sensors
+console.log("\\n--- All Readings ---");
+sensors.forEach(s => {
+  const pct = ((s.value / s.max) * 100).toFixed(0);
+  console.log(s.id + ": " + s.value + " " + s.unit + " (" + pct + "% of max)");
+});
+
+// filter — only sensors above 80% capacity
+const overloaded = sensors.filter(s => (s.value / s.max) > 0.8);
+console.log("\\n--- Overloaded sensors ---");
+overloaded.forEach(s => console.log("⚠️", s.id, "→", s.label));`,
+  quiz: {
+    q: "Given: const data = [10, 20, 30]; — what does data[1] return?",
+    opts: ["10","20","30","undefined"],
+    answer: 1,
+    explain: "✅ Correct! Arrays use zero-based indexing. data[0]=10, data[1]=20, data[2]=30. Index 1 is the second item."
+  },
+  challenge: {
+    title: "Add a Sensor & Filter",
+    desc: "Add a new sensor to the array using push(), then filter and log only sensors with value above 80.",
+    starter: `const sensors = [\n  { id: "TMP-01", value: 72 },\n  { id: "PRS-01", value: 91 },\n  { id: "RPM-01", value: 60 },\n];\n\n// 1. Add a new sensor using .push()\nsensors.push({ id: "HUM-01", value: 85 });\n\n// 2. Filter sensors with value > 80\nconst highSensors = sensors.filter(s => s.value > 80);\n\n// 3. Log them\nhighSensors.forEach(s => console.log(s.id, "→", s.value));\n`
+  }
+},
+{
+  id: 7,
+  title: "DOM Manipulation",
+  icon: "🖥️",
+  tag: "getElementById · innerHTML · events",
+  xp: 200,
+  content: `
+<div class="concept">
+  <div class="concept-header">
+    <div class="concept-icon">🌐</div>
+    <div class="concept-title">What is the DOM?</div>
+  </div>
+  <div class="concept-body">
+    <p>The <strong>Document Object Model (DOM)</strong> is JavaScript's way of interacting with HTML. Every HTML element becomes a JS object you can read and modify.</p>
+    <div class="highlight">
+      <span class="cm">// SELECT an element</span><br>
+      <span class="kw">const</span> box = document.<span class="fn">getElementById</span>(<span class="str">"myBox"</span>);<br>
+      <span class="kw">const</span> items = document.<span class="fn">querySelectorAll</span>(<span class="str">".item"</span>);<br><br>
+      <span class="cm">// CHANGE content</span><br>
+      box.innerHTML = <span class="str">"Hello!"</span>;<br>
+      box.textContent = <span class="str">"Safe text"</span>;<br><br>
+      <span class="cm">// CHANGE style</span><br>
+      box.style.color = <span class="str">"red"</span>;<br>
+      box.classList.<span class="fn">add</span>(<span class="str">"active"</span>);<br><br>
+      <span class="cm">// REACT to events</span><br>
+      box.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>() {<br>
+      &nbsp;&nbsp;console.<span class="fn">log</span>(<span class="str">"Clicked!"</span>);<br>
+      });
+    </div>
+  </div>
+</div>
+
+<div class="concept">
+  <div class="concept-header">
+    <div class="concept-icon">⚡</div>
+    <div class="concept-title">Putting It All Together</div>
+  </div>
+  <div class="concept-body">
+    <p>DOM manipulation <strong>combines</strong> all Phase 1 skills: you select elements (variables), loop through sensor data (loops), check conditions (control flow), and update the page (DOM). This is exactly how the sensor dashboard from your mini-project works!</p>
+    <div class="highlight">
+      sensors.<span class="fn">forEach</span>(sensor => {<br>
+      &nbsp;&nbsp;<span class="kw">const</span> el = document.<span class="fn">getElementById</span>(sensor.id);<br>
+      &nbsp;&nbsp;<span class="kw">if</span> (sensor.value > sensor.max) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;el.classList.<span class="fn">add</span>(<span class="str">"danger"</span>);<br>
+      &nbsp;&nbsp;}<br>
+      &nbsp;&nbsp;el.textContent = sensor.value + <span class="str">" °C"</span>;<br>
+      });
+    </div>
+  </div>
+</div>`,
+  code: `// DOM manipulation runs in a browser context.
+// In this sandbox, we simulate it with objects.
+// In a real HTML file, these methods work on page elements.
+
+// Simulated DOM helper (for this sandbox)
+const fakeDOM = {};
+const document_sim = {
+  getElementById: (id) => fakeDOM[id] || (fakeDOM[id] = { id, innerHTML: "", style: {}, classList: { classes: [], add(c){ this.classes.push(c); } } }),
+};
+
+// 1. Create element references
+const tempDisplay  = document_sim.getElementById("temp-display");
+const statusDisplay = document_sim.getElementById("status-badge");
+
+// 2. Write to them (like innerHTML in a real page)
+const currentTemp = 92;
+tempDisplay.innerHTML = currentTemp + " °C";
+
+// 3. Conditional styling via classList
+if (currentTemp >= 100) {
+  statusDisplay.innerHTML = "DANGER";
+  statusDisplay.classList.add("danger");
+} else if (currentTemp >= 85) {
+  statusDisplay.innerHTML = "WARNING";
+  statusDisplay.classList.add("warn");
+} else {
+  statusDisplay.innerHTML = "NORMAL";
+  statusDisplay.classList.add("ok");
+}
+
+// 4. Log what we "displayed"
+console.log("Element #temp-display →", tempDisplay.innerHTML);
+console.log("Element #status-badge →", statusDisplay.innerHTML);
+console.log("CSS classes applied →", statusDisplay.classList.classes.join(", "));
+console.log("\\n✅ In a real HTML file, this updates what you SEE on screen!");`,
+  quiz: {
+    q: "Which method selects a single HTML element by its id attribute?",
+    opts: ["document.querySelector('.id')","document.getElementById('id')","document.getElement('id')","document.find('#id')"],
+    answer: 1,
+    explain: "✅ Correct! document.getElementById('id') is the standard way to grab a single element by its id. Note: no # symbol needed, just the id name."
+  },
+  challenge: {
+    title: "Build a Mini Dashboard Updater",
+    desc: "Using the simulated DOM above, write a forEach loop that 'updates' 3 sensor elements and logs what each displays.",
+    starter: `const sensors = [\n  { id: "tmp", value: 88, unit: "°C" },\n  { id: "prs", value: 5.2, unit: "bar" },\n  { id: "rpm", value: 1450, unit: "rpm" },\n];\n\n// Loop through sensors and simulate DOM update\nsensors.forEach(s => {\n  // In real code: document.getElementById(s.id).textContent = ...\n  console.log("Updating #" + s.id + " → " + s.value + " " + s.unit);\n});\n\nconsole.log("Dashboard updated!");\n`
+  }
+}
+];
+
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
+let currentLesson = 0;
+let completedLessons = new Set();
+let totalXP = 0;
+let quizAnswered = [];
+let challengesDone = new Set();
+
+// ════════════════════════════════════════════════
+// BUILD NAV
+// ════════════════════════════════════════════════
+function buildNav() {
+  const nav = document.getElementById('nav-list');
+  nav.innerHTML = lessons.map((l, i) => `
+    <div class="nav-item ${i===currentLesson?'active':''} ${completedLessons.has(i)?'done':''}"
+         onclick="goToLesson(${i})">
+      <div class="nav-num">
+        <span class="n">${i+1}</span>
+        <span class="check">✓</span>
+      </div>
+      <div>
+        <div>${l.icon} ${l.title}</div>
+        <div class="nav-sub">${l.tag}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ════════════════════════════════════════════════
+// BUILD STEP DOTS
+// ════════════════════════════════════════════════
+function buildDots() {
+  const dots = document.getElementById('step-dots');
+  dots.innerHTML = lessons.map((l,i) => `
+    <div class="step-dot ${i===currentLesson?'active':''} ${completedLessons.has(i)?'done':''}"
+         onclick="goToLesson(${i})" title="${l.title}"></div>
+  `).join('');
+  document.getElementById('step-info').textContent = `Step ${currentLesson+1} of ${lessons.length}`;
+  document.getElementById('xp-earned').textContent = totalXP + ' XP earned';
+}
+
+// ════════════════════════════════════════════════
+// UPDATE PROGRESS
+// ════════════════════════════════════════════════
+function updateProgress() {
+  const pct = Math.round((completedLessons.size / lessons.length) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  const maxXP = lessons.reduce((a,l) => a+l.xp, 0) * 2;
+  const xpPct = Math.min(100, (totalXP / maxXP) * 100);
+  document.getElementById('xp-fill').style.width = xpPct + '%';
+  document.getElementById('xp-val').textContent = totalXP;
+}
+
+// ════════════════════════════════════════════════
+// RENDER LESSON
+// ════════════════════════════════════════════════
+function renderLesson(idx) {
+  const l = lessons[idx];
+  document.getElementById('top-title').textContent = l.icon + ' ' + l.title;
+  document.getElementById('top-meta').textContent = 'Lesson ' + (idx+1) + ' of ' + lessons.length + ' · ' + l.tag + ' · ' + l.xp + ' XP';
+
+  const isQuizDone = quizAnswered[idx] !== undefined;
+  const isChallDone = challengesDone.has(idx);
+  const isCompleted = completedLessons.has(idx);
+
+  const content = document.getElementById('content-area');
+  content.innerHTML = `
+    ${l.content}
+
+    <!-- LIVE EDITOR -->
+    <div class="editor-wrap">
+      <div class="editor-label">
+        <div class="editor-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        script.js
+      </div>
+      <div class="editor-bar">
+        <span class="editor-filename">Try it yourself</span>
+      </div>
+      <textarea class="code" id="code-${idx}" rows="12">${l.code}</textarea>
+      <div class="run-bar">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">▶ console output</span>
+        <button class="run-btn" onclick="runCode(${idx})">▶ RUN</button>
+      </div>
+      <div class="output-box" id="output-${idx}"></div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="quiz-wrap">
+      <div class="quiz-title">// QUICK CHECK</div>
+      <div class="quiz-q">${l.quiz.q}</div>
+      <div class="quiz-options" id="quiz-opts-${idx}">
+        ${l.quiz.opts.map((o,oi) => `
+          <div class="quiz-opt ${isQuizDone?(oi===l.quiz.answer?'correct':(quizAnswered[idx]===oi?'wrong':'')):''}${!isQuizDone?' selectable':''}"
+               onclick="selectQuiz(${idx},${oi})"
+               id="qopt-${idx}-${oi}">
+            <span class="quiz-opt-key">${['A','B','C','D'][oi]}</span>
+            ${o}
+          </div>
+        `).join('')}
+      </div>
+      <button class="check-btn" id="check-btn-${idx}"
+        onclick="checkQuiz(${idx})"
+        ${isQuizDone?'disabled':''}>
+        ${isQuizDone?'✓ Answered':'Check Answer'}
+      </button>
+      <div class="quiz-feedback ${isQuizDone?'show ok':''}" id="qfb-${idx}">
+        ${isQuizDone?l.quiz.explain:''}
+      </div>
+    </div>
+
+    <!-- CHALLENGE -->
+    <div class="challenge">
+      <div class="challenge-header">
+        <span class="challenge-badge">⚡ CHALLENGE</span>
+        <span class="challenge-title">${l.challenge.title}</span>
+        ${isChallDone?'<span style="color:var(--accent3);font-size:13px;margin-left:auto">✓ Done</span>':''}
+      </div>
+      <div class="challenge-desc">${l.challenge.desc}</div>
+      <div class="challenge-hint">💡 Write your code in the editor below, then click RUN</div>
+      <div class="editor-bar" style="border-radius:6px 6px 0 0;border:1px solid var(--border);">
+        <span class="editor-filename">challenge.js</span>
+        ${isChallDone?'':'<span style="font-family:var(--mono);font-size:10px;color:var(--accent3)">+'+l.xp+' XP on complete</span>'}
+      </div>
+      <textarea class="code" id="chal-${idx}" rows="10">${l.challenge.starter}</textarea>
+      <div class="run-bar">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Run your solution</span>
+        <button class="run-btn" onclick="runChallenge(${idx})">▶ RUN</button>
+      </div>
+      <div class="output-box" id="chal-out-${idx}"></div>
+    </div>
+
+    <!-- COMPLETE BTN -->
+    <div style="text-align:center;padding:20px 0;">
+      <button class="btn ${isCompleted?'btn-ghost':'btn-primary'}" onclick="completeLesson(${idx})" style="font-size:15px;padding:12px 32px;">
+        ${isCompleted?'✓ Lesson Completed':'Mark as Complete →'}
+      </button>
+    </div>
+  `;
+  content.scrollTop = 0;
+
+  // restore selected quiz option
+  if (quizAnswered[idx] !== undefined && !isQuizDone) {
+    const opt = document.getElementById(`qopt-${idx}-${quizAnswered[idx]}`);
+    if (opt) opt.classList.add('selected');
+  }
+}
+
+// ════════════════════════════════════════════════
+// RUN CODE (sandboxed)
+// ════════════════════════════════════════════════
+function runCode(idx) {
+  const code = document.getElementById('code-' + idx).value;
+  executeCode(code, 'output-' + idx);
+}
+
+function runChallenge(idx) {
+  const code = document.getElementById('chal-' + idx).value;
+  const outId = 'chal-out-' + idx;
+  executeCode(code, outId, () => {
+    if (!challengesDone.has(idx)) {
+      challengesDone.add(idx);
+      totalXP += lessons[idx].xp;
+      updateProgress();
+      buildDots();
+      showToast('⚡ Challenge complete! +' + lessons[idx].xp + ' XP', 'success');
+      // refresh to show done state
+      const btn = document.querySelector('.challenge span[style*="accent3"]');
+    }
+  });
+}
+
+function executeCode(code, outputId, onSuccess) {
+  const outEl = document.getElementById(outputId);
+  const logs = [];
+
+  const fakeConsole = {
+    log: (...args) => logs.push({ type: 'out', msg: args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') }),
+    error: (...args) => logs.push({ type: 'err', msg: args.join(' ') }),
+    warn: (...args) => logs.push({ type: 'out', msg: '⚠ ' + args.join(' ') }),
+  };
+
+  try {
+    const fn = new Function('console', code);
+    fn(fakeConsole);
+    outEl.innerHTML = logs.length
+      ? logs.map(l => `<div class="${l.type==='err'?'err-line':'out-line'}"><span class="log-prefix">›</span>${escHtml(l.msg)}</div>`).join('')
+      : '<span style="color:var(--muted)">// no output</span>';
+    outEl.classList.add('has-output');
+    if (onSuccess) onSuccess();
+  } catch(e) {
+    outEl.innerHTML = `<div class="err-line">❌ ${escHtml(e.message)}</div>`;
+    outEl.classList.add('has-output');
+  }
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ════════════════════════════════════════════════
+// QUIZ
+// ════════════════════════════════════════════════
+let selectedQuiz = {};
+
+function selectQuiz(lessonIdx, optIdx) {
+  if (quizAnswered[lessonIdx] !== undefined) return;
+  selectedQuiz[lessonIdx] = optIdx;
+  document.querySelectorAll(`[id^="qopt-${lessonIdx}-"]`).forEach(el => el.classList.remove('selected'));
+  document.getElementById(`qopt-${lessonIdx}-${optIdx}`).classList.add('selected');
+}
+
+function checkQuiz(lessonIdx) {
+  const selected = selectedQuiz[lessonIdx];
+  if (selected === undefined) { showToast('Select an answer first!', 'error'); return; }
+  const l = lessons[lessonIdx];
+  const correct = selected === l.quiz.answer;
+
+  quizAnswered[lessonIdx] = selected;
+  const fb = document.getElementById('qfb-' + lessonIdx);
+  fb.className = 'quiz-feedback show ' + (correct ? 'ok' : 'bad');
+
+  document.querySelectorAll(`[id^="qopt-${lessonIdx}-"]`).forEach((el, i) => {
+    if (i === l.quiz.answer) el.classList.add('correct');
+    else if (i === selected && !correct) el.classList.add('wrong');
+  });
+
+  if (correct) {
+    fb.textContent = l.quiz.explain;
+    totalXP += Math.round(l.xp * 0.5);
+    updateProgress();
+    buildDots();
+    showToast('✅ Correct! +' + Math.round(l.xp * 0.5) + ' XP', 'success');
+  } else {
+    fb.textContent = '❌ Not quite. The correct answer was: ' + l.quiz.opts[l.quiz.answer] + '. ' + l.quiz.explain;
+    showToast('Keep trying — check the explanation!', 'error');
+  }
+
+  document.getElementById('check-btn-' + lessonIdx).disabled = true;
+  document.getElementById('check-btn-' + lessonIdx).textContent = '✓ Answered';
+}
+
+// ════════════════════════════════════════════════
+// COMPLETE LESSON
+// ════════════════════════════════════════════════
+function completeLesson(idx) {
+  if (!completedLessons.has(idx)) {
+    completedLessons.add(idx);
+    totalXP += lessons[idx].xp;
+    updateProgress();
+    showToast('🎉 Lesson ' + (idx+1) + ' complete! +' + lessons[idx].xp + ' XP', 'success');
+  }
+  buildNav();
+  buildDots();
+
+  // Check if all done
+  if (completedLessons.size === lessons.length) {
+    setTimeout(showComplete, 400);
+    return;
+  }
+
+  // Auto-advance
+  if (idx < lessons.length - 1) {
+    setTimeout(() => goToLesson(idx + 1), 600);
+  } else {
+    renderLesson(idx);
+  }
+}
+
+function showComplete() {
+  const content = document.getElementById('content-area');
+  const quizScore = Object.keys(quizAnswered).filter(i => quizAnswered[i] === lessons[i].quiz.answer).length;
+  content.innerHTML = `
+    <div class="complete-screen">
+      <span class="complete-emoji">🏆</span>
+      <div class="complete-title">Phase 1 Complete!</div>
+      <div class="complete-sub">You've finished all JavaScript Foundations lessons</div>
+      <div class="xp-badge">⚡ ${totalXP} Total XP Earned</div>
+      <div class="score-grid">
+        <div class="score-card">
+          <div class="score-val">${lessons.length}</div>
+          <div class="score-lbl">LESSONS</div>
+        </div>
+        <div class="score-card">
+          <div class="score-val">${quizScore}/${lessons.length}</div>
+          <div class="score-lbl">QUIZ SCORE</div>
+        </div>
+        <div class="score-card">
+          <div class="score-val">${challengesDone.size}</div>
+          <div class="score-lbl">CHALLENGES</div>
+        </div>
+        <div class="score-card">
+          <div class="score-val">${totalXP}</div>
+          <div class="score-lbl">TOTAL XP</div>
+        </div>
+      </div>
+      <p style="color:var(--muted2);font-size:14px;max-width:400px;margin:0 auto 24px;line-height:1.7;">
+        You now know the core building blocks of JavaScript. Next up: <strong style="color:#fff">Phase 2 — Async JS, APIs, and Fetch</strong> — where you'll pull live sensor data from real endpoints.
+      </p>
+      <button class="btn btn-primary" onclick="goToLesson(0)" style="font-size:15px;padding:12px 32px;">Review from the start</button>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════
+function goToLesson(idx) {
+  currentLesson = idx;
+  buildNav();
+  buildDots();
+  renderLesson(idx);
+}
+
+function navigate(dir) {
+  const next = currentLesson + dir;
+  if (next >= 0 && next < lessons.length) goToLesson(next);
+}
+
+// ════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type==='success'?'success':type==='error'?'error':'');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+buildNav();
+buildDots();
+renderLesson(0);
+updateProgress();
+</script>
+</body>
+</html>
