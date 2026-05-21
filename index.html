@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS.learn — Interactive JavaScript Course</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0e14;
+  --surface: #13161f;
+  --surface2: #1a1e2b;
+  --border: #242838;
+  --p1: #f0c040;
+  --p2: #a78bfa;
+  --green: #10b981;
+  --blue: #38bdf8;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --muted2: #94a3b8;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:48px 20px 60px;
+  background-image:
+    radial-gradient(ellipse at 20% 10%, rgba(240,192,64,.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 90%, rgba(167,139,250,.05) 0%, transparent 50%);
+}
+
+/* ── HEADER ── */
+.header{text-align:center;margin-bottom:56px;}
+.logo{font-size:48px;font-weight:800;color:#fff;letter-spacing:-2px;line-height:1;}
+.logo .p1{color:var(--p1);}
+.logo .p2{color:var(--p2);}
+.tagline{font-family:var(--mono);font-size:13px;color:var(--muted);
+  letter-spacing:2px;margin-top:12px;text-transform:uppercase;}
+.divider{width:60px;height:2px;background:linear-gradient(90deg,var(--p1),var(--p2));
+  margin:20px auto 0;border-radius:2px;}
+
+/* ── PHASE CARDS ── */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:720px;width:100%;margin-bottom:36px;}
+@media(max-width:560px){.cards{grid-template-columns:1fr;}}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:32px;
+  text-decoration:none;color:inherit;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  transition:opacity .25s;
+}
+.card.p1::before{background:linear-gradient(90deg,var(--p1),#fb923c);}
+.card.p2::before{background:linear-gradient(90deg,var(--p2),var(--blue));}
+.card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.12);}
+.card.p1:hover{box-shadow:0 16px 48px rgba(240,192,64,.1);}
+.card.p2:hover{box-shadow:0 16px 48px rgba(167,139,250,.1);}
+
+.card-phase{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;
+  margin-bottom:14px;font-weight:600;
+}
+.card.p1 .card-phase{color:var(--p1);}
+.card.p2 .card-phase{color:var(--p2);}
+
+.card-title{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;}
+.card-sub{font-size:13px;color:var(--muted2);margin-bottom:20px;line-height:1.5;}
+
+.lesson-list{list-style:none;display:flex;flex-direction:column;gap:6px;flex:1;}
+.lesson-list li{
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  display:flex;align-items:center;gap:8px;
+}
+.lesson-list li::before{
+  content:'';width:4px;height:4px;border-radius:50%;flex-shrink:0;
+}
+.card.p1 .lesson-list li::before{background:var(--p1);}
+.card.p2 .lesson-list li::before{background:var(--p2);}
+
+.card-footer{
+  margin-top:24px;display:flex;align-items:center;justify-content:space-between;
+  padding-top:16px;border-top:1px solid var(--border);
+}
+.xp-tag{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.open-btn{
+  font-family:var(--sans);font-size:12px;font-weight:700;
+  padding:6px 16px;border-radius:6px;border:none;cursor:pointer;
+  transition:all .2s;letter-spacing:.5px;
+}
+.card.p1 .open-btn{background:var(--p1);color:#000;}
+.card.p1 .open-btn:hover{background:#f5cf60;}
+.card.p2 .open-btn{background:var(--p2);color:#000;}
+.card.p2 .open-btn:hover{background:#c4b5fd;}
+
+/* ── STATS ── */
+.stats{
+  display:flex;gap:32px;flex-wrap:wrap;justify-content:center;
+  margin-bottom:40px;
+}
+.stat{text-align:center;}
+.stat-val{font-size:28px;font-weight:800;color:#fff;font-family:var(--mono);}
+.stat-lbl{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+
+/* ── HOW TO START ── */
+.guide{
+  max-width:720px;width:100%;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:28px 32px;
+}
+.guide-title{
+  font-size:14px;font-weight:700;color:var(--muted2);
+  font-family:var(--mono);letter-spacing:2px;margin-bottom:18px;
+  text-transform:uppercase;
+}
+.guide-steps{display:flex;flex-direction:column;gap:12px;}
+.guide-step{display:flex;align-items:flex-start;gap:14px;font-size:14px;color:var(--muted2);}
+.step-num{
+  width:24px;height:24px;border-radius:50%;flex-shrink:0;
+  background:var(--border);font-family:var(--mono);font-size:11px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);
+  margin-top:1px;
+}
+.guide-step strong{color:var(--text);}
+.guide-step code{
+  font-family:var(--mono);font-size:11px;background:var(--surface2);
+  padding:2px 6px;border-radius:3px;color:var(--blue);
+}
+
+/* ── FOOTER ── */
+footer{margin-top:40px;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">JS<span class="p1">.</span><span class="p2">learn</span></div>
+  <div class="tagline">Interactive JavaScript Course · Phases 1 &amp; 2</div>
+  <div class="divider"></div>
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <div class="stat-val">15</div>
+    <div class="stat-lbl">LESSONS</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">30</div>
+    <div class="stat-lbl">LIVE EDITORS</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">15</div>
+    <div class="stat-lbl">CHALLENGES</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">2550</div>
+    <div class="stat-lbl">MAX XP</div>
+  </div>
+</div>
+
+<div class="cards">
+  <!-- Phase 1 -->
+  <a class="card p1" href="phase1/index.html">
+    <div class="card-phase">PHASE 1</div>
+    <div class="card-title">JS Foundations</div>
+    <div class="card-sub">Core syntax and concepts — from zero to building a sensor dashboard.</div>
+    <ul class="lesson-list">
+      <li>Variables &amp; Data Types</li>
+      <li>Operators</li>
+      <li>Control Flow</li>
+      <li>Loops</li>
+      <li>Functions</li>
+      <li>Arrays &amp; Objects</li>
+      <li>DOM Manipulation</li>
+    </ul>
+    <div class="card-footer">
+      <span class="xp-tag">700 XP · 7 lessons</span>
+      <button class="open-btn">Start →</button>
+    </div>
+  </a>
+
+  <!-- Phase 2 -->
+  <a class="card p2" href="phase2/index.html">
+    <div class="card-phase">PHASE 2</div>
+    <div class="card-title">Advanced JS</div>
+    <div class="card-sub">Async code, real APIs, modern syntax — build production-grade apps.</div>
+    <ul class="lesson-list">
+      <li>Scope &amp; Closures</li>
+      <li>Higher-Order Functions</li>
+      <li>DOM Events</li>
+      <li>Promises</li>
+      <li>Async / Await</li>
+      <li>Error Handling</li>
+      <li>ES6+ Modern JS</li>
+      <li>Capstone Dashboard</li>
+    </ul>
+    <div class="card-footer">
+      <span class="xp-tag">1240 XP · 8 lessons</span>
+      <button class="open-btn">Start →</button>
+    </div>
+  </a>
+</div>
+
+<div class="guide">
+  <div class="guide-title">// Recommended Path</div>
+  <div class="guide-steps">
+    <div class="guide-step">
+      <div class="step-num">1</div>
+      <div>Start with <strong>Phase 1</strong> — read the concept, run the live code, answer the quiz, complete the challenge.</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">2</div>
+      <div>Click <strong>Mark Complete</strong> on each lesson to track progress and earn XP.</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">3</div>
+      <div>After completing all 7 Phase 1 lessons, move to <strong>Phase 2</strong>.</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">4</div>
+      <div>The <strong>Capstone (Lesson 8)</strong> in Phase 2 combines everything into a real async sensor dashboard pipeline.</div>
+    </div>
+  </div>
+</div>
+
+<footer>BUILT WITH JS · HOSTED ON GITHUB PAGES</footer>
+
+</body>
+</html>
